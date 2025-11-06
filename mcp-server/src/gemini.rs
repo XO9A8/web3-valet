@@ -1,6 +1,6 @@
-//! Google Gemini API client.
+//! AI API client (Groq/Gemini).
 //!
-//! This module handles all communication with Google's Gemini API,
+//! This module handles all communication with AI APIs (primarily Groq, with Gemini fallback),
 //! including building requests, making HTTP calls, and parsing responses.
 
 use crate::models::*;
@@ -44,7 +44,12 @@ pub async fn process_with_gemini(
     agent: &Agent,
     user_text: String,
     conversation_history: Option<Vec<Message>>,
+    use_groq: bool,
 ) -> Result<(String, Option<u32>), String> {
+    if use_groq {
+        return process_with_groq(client, api_key, agent, user_text, conversation_history).await;
+    }
+    
     let mut contents = vec![];
 
     // Convert conversation history to Gemini format
@@ -134,5 +139,95 @@ pub async fn process_with_gemini(
         .usage_metadata
         .and_then(|u| u.total_token_count);
 
+    Ok((reply_text, tokens_used))
+}
+
+/// Processes text through the Groq API (OpenAI-compatible).
+async fn process_with_groq(
+    client: &Client,
+    api_key: &str,
+    agent: &Agent,
+    user_text: String,
+    conversation_history: Option<Vec<Message>>,
+) -> Result<(String, Option<u32>), String> {
+    use serde_json::json;
+    
+    let mut messages = vec![
+        json!({
+            "role": "system",
+            "content": agent.system_prompt.clone()
+        })
+    ];
+    
+    // Add conversation history if available
+    if let Some(history) = conversation_history {
+        for msg in history {
+            messages.push(json!({
+                "role": msg.role,
+                "content": msg.content
+            }));
+        }
+    }
+    
+    // Add current user message
+    messages.push(json!({
+        "role": "user",
+        "content": user_text
+    }));
+    
+    // Use a Groq-compatible model (llama models are fast and free)
+    let groq_request = json!({
+        "model": "llama-3.3-70b-versatile",  // Fast and capable model
+        "messages": messages,
+        "temperature": 0.7,
+        "max_tokens": 1024
+    });
+    
+    let api_url = "https://api.groq.com/openai/v1/chat/completions";
+    
+    let response = client
+        .post(api_url)
+        .header("Authorization", format!("Bearer {}", api_key))
+        .header("Content-Type", "application/json")
+        .json(&groq_request)
+        .send()
+        .await
+        .map_err(|e| format!("Groq API request failed: {}", e))?;
+    
+    let response_status = response.status();
+    let response_text = response
+        .text()
+        .await
+        .map_err(|e| format!("Failed to read Groq response: {}", e))?;
+    
+    if !response_status.is_success() {
+        tracing::error!(
+            "Groq API error response ({}): {}",
+            response_status,
+            response_text
+        );
+        return Err(format!(
+            "Groq API error ({}): {}",
+            response_status, response_text
+        ));
+    }
+    
+    tracing::info!("Groq API response received successfully");
+    
+    // Parse OpenAI-compatible response
+    let groq_response: serde_json::Value = serde_json::from_str(&response_text)
+        .map_err(|e| format!("Failed to parse Groq response: {}. Raw: {}", e, response_text))?;
+    
+    // Extract the reply text from OpenAI-compatible format
+    let reply_text = groq_response["choices"][0]["message"]["content"]
+        .as_str()
+        .unwrap_or("Sorry, I couldn't generate a response.")
+        .to_string();
+    
+    // Extract token usage
+    let tokens_used = groq_response["usage"]["total_tokens"]
+        .as_u64()
+        .map(|t| t as u32);
+    
     Ok((reply_text, tokens_used))
 }

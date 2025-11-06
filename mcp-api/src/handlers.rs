@@ -404,7 +404,7 @@ pub async fn handle_audio_input(
     let stt_url = "https://api.elevenlabs.io/v1/speech-to-text";
     
     let form = reqwest::multipart::Form::new()
-        .part("audio", reqwest::multipart::Part::bytes(audio_data.clone())
+        .part("file", reqwest::multipart::Part::bytes(audio_data.clone())
             .file_name(original_filename)
             .mime_str("audio/mpeg").unwrap()
         )
@@ -479,11 +479,24 @@ pub async fn handle_audio_input(
     let agent_reply_text: String = match mcp_response {
         Ok(response) => {
             if response.status().is_success() {
-                let rpc_response: JsonRpcResponse<ProcessTextResult> =
-                    response.json().await.unwrap();
-                let reply = rpc_response.result.reply_text;
-                tracing::info!("Got agent reply from MCP: {}", reply);
-                reply
+                let response_text = response.text().await.unwrap_or_default();
+                tracing::info!("MCP response: {}", response_text);
+                
+                match serde_json::from_str::<JsonRpcResponse<ProcessTextResult>>(&response_text) {
+                    Ok(rpc_response) => {
+                        let reply = rpc_response.result.reply_text;
+                        tracing::info!("Got agent reply from MCP: {}", reply);
+                        reply
+                    }
+                    Err(e) => {
+                        tracing::error!("Failed to parse MCP response: {:?}", e);
+                        tracing::error!("Raw response was: {}", response_text);
+                        return Err((
+                            StatusCode::INTERNAL_SERVER_ERROR,
+                            Json("Error parsing MCP response".to_string()),
+                        ));
+                    }
+                }
             } else {
                 tracing::error!("MCP /process_text returned error: {:?}", response.status());
                 return Err((

@@ -1,7 +1,7 @@
 //! Data models for the MCP server.
 //!
 //! This module contains all the data structures used throughout the server,
-//! including JSON-RPC protocol types, agent definitions, Gemini API types,
+//! including JSON-RPC protocol types, agent definitions, AI API types (Groq/Gemini),
 //! and processing results.
 
 use serde::{Deserialize, Serialize};
@@ -74,7 +74,7 @@ pub struct Agent {
     pub description: String,
     /// List of capabilities (e.g., "text", "web3", "coding")
     pub capabilities: Vec<String>,
-    /// AI model used by this agent (e.g., "gemini-2.0-flash-exp")
+    /// AI model used by this agent (e.g., "mixtral-8x7b-32768" for Groq)
     pub model: String,
     /// System prompt that defines the agent's behavior
     pub system_prompt: String,

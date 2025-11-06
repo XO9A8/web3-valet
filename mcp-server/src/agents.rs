@@ -34,13 +34,13 @@ pub fn get_agents() -> Vec<Agent> {
         Agent {
             id: "agent_001".to_string(),
             name: "General Assistant".to_string(),
-            description: "A helpful general-purpose AI assistant powered by Gemini".to_string(),
+            description: "A helpful general-purpose AI assistant powered by Groq".to_string(),
             capabilities: vec![
                 "text".to_string(),
                 "conversation".to_string(),
                 "reasoning".to_string(),
             ],
-            model: "gemini-2.0-flash-exp".to_string(),
+            model: "mixtral-8x7b-32768".to_string(),
             system_prompt: "You are a helpful, friendly, and knowledgeable AI assistant. Provide clear, accurate, and concise responses.".to_string(),
         },
         Agent {
@@ -53,7 +53,7 @@ pub fn get_agents() -> Vec<Agent> {
                 "blockchain".to_string(),
                 "nft".to_string(),
             ],
-            model: "gemini-2.0-flash-exp".to_string(),
+            model: "mixtral-8x7b-32768".to_string(),
             system_prompt: "You are a Web3 and blockchain expert. Help users understand cryptocurrency, NFTs, smart contracts, DeFi, and related technologies. Provide accurate technical information and practical guidance.".to_string(),
         },
         Agent {
@@ -65,7 +65,7 @@ pub fn get_agents() -> Vec<Agent> {
                 "audio".to_string(),
                 "conversation".to_string(),
             ],
-            model: "gemini-2.0-flash-exp".to_string(),
+            model: "mixtral-8x7b-32768".to_string(),
             system_prompt: "You are an AI assistant optimized for voice interactions. Respond in a natural, conversational tone suitable for speech. Keep responses concise and easy to understand when spoken aloud.".to_string(),
         },
         Agent {
@@ -77,7 +77,7 @@ pub fn get_agents() -> Vec<Agent> {
                 "debugging".to_string(),
                 "technical".to_string(),
             ],
-            model: "gemini-2.0-flash-exp".to_string(),
+            model: "mixtral-8x7b-32768".to_string(),
             system_prompt: "You are an expert programming assistant. Help users with code, debugging, architecture, and technical decisions. Provide clear explanations and working code examples.".to_string(),
         },
     ]
