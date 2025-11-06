@@ -171,19 +171,20 @@ pub async fn handle_process_text(
     // Start timing
     let start_time = std::time::Instant::now();
 
-    // Process the text with Gemini
+    // Process the text with Gemini or Groq
     let (reply_text, tokens_used) = match process_with_gemini(
         &state.http_client,
         &state.gemini_api_key,
         &agent,
         params.user_text,
         params.conversation_history,
+        state.use_groq,
     )
     .await
     {
         Ok(result) => result,
         Err(err_msg) => {
-            tracing::error!("Gemini processing error: {}", err_msg);
+            tracing::error!("AI processing error: {}", err_msg);
             return Json(JsonRpcResponse {
                 jsonrpc: "2.0".to_string(),
                 result: None,

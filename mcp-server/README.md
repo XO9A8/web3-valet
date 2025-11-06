@@ -1,6 +1,6 @@
 # MCP Server (Model Context Protocol)
 
-A JSON-RPC 2.0 server built with Rust and Axum that provides AI agent functionality using Google's Gemini API. This server manages multiple specialized AI agents and processes user requests with context-aware responses.
+A JSON-RPC 2.0 server built with Rust and Axum that provides AI agent functionality using Groq API. This server manages multiple specialized AI agents and processes user requests with context-aware responses.
 
 ## 📚 Table of Contents
 
@@ -23,7 +23,7 @@ The MCP Server is the AI brain of the system:
 
 1. **Manages AI Agents**: Four specialized agents with different expertise
 2. **Processes Requests**: Handles JSON-RPC 2.0 protocol for agent interactions
-3. **Interfaces with Gemini**: Uses Google's Gemini 2.0 Flash model for AI responses
+3. **Interfaces with Groq**: Uses Groq's fast AI models for responses
 4. **Provides Context**: Each agent has specialized system instructions
 5. **Returns Metadata**: Includes processing stats like tokens used and timing
 
@@ -48,12 +48,12 @@ The MCP Server is the AI brain of the system:
 │  └────────────────────────────────────┘  │
 └────────┬─────────────────────────────────┘
          │ HTTPS
-         │ POST with system_instruction
+         │ POST with system message
          ▼
 ┌──────────────────┐
-│   Google Gemini  │
-│  gemini-2.0-flash│
-│    -exp (v1beta) │
+│    Groq API      │
+│   mixtral-8x7b   │
+│  or llama models │
 └──────────────────┘
 ```
 
@@ -61,7 +61,7 @@ The MCP Server is the AI brain of the system:
 
 - **JSON-RPC 2.0 Protocol**: Standard protocol for remote procedure calls
 - **Multiple AI Agents**: Four specialized agents with unique capabilities
-- **Gemini Integration**: Powered by Google's latest Gemini 2.0 model
+- **Groq Integration**: Powered by fast, free AI models from Groq
 - **System Instructions**: Each agent has tailored behavior and expertise
 - **Metadata Tracking**: Returns tokens used, processing time, and confidence
 - **Error Handling**: Comprehensive error responses with details
@@ -92,23 +92,24 @@ The MCP Server is the AI brain of the system:
 ## 📋 Prerequisites
 
 - **Rust** 1.70 or higher ([Install Rust](https://rustup.rs/))
-- **Google Gemini API Key** ([Get your key](https://aistudio.google.com/app/apikey))
+- **Groq API Key** ([Get your key](https://console.groq.com/keys))
 
 ## 🚀 Quick Start
 
-### 1. Get Your Gemini API Key
+### 1. Get Your Groq API Key
 
-1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Click **"Get API Key"** or **"Create API Key"**
-3. Copy the generated API key
+1. Go to [Groq Console](https://console.groq.com/keys)
+2. Sign up for a free account
+3. Click **"Create API Key"**
+4. Copy the generated API key
 
 ### 2. Configure Environment
 
 Create a `.env` file in the `mcp-server` directory:
 
 ```env
-# Google Gemini API Configuration
-GEMINI_API_KEY=your_gemini_api_key_here
+# Groq API Configuration (FREE - Unlimited rate limits!)
+GROQ_API_KEY=your_groq_api_key_here
 
 # Logging Configuration
 RUST_LOG=info
@@ -170,25 +171,25 @@ List all available AI agents.
         "id": "agent_001",
         "name": "General Assistant",
         "description": "A helpful general-purpose AI assistant",
-        "model": "gemini-2.0-flash-exp"
+        "model": "mixtral-8x7b-32768"
       },
       {
         "id": "agent_002",
         "name": "Web3 Expert",
         "description": "Specialized in blockchain, cryptocurrency, and Web3 technologies",
-        "model": "gemini-2.0-flash-exp"
+        "model": "mixtral-8x7b-32768"
       },
       {
         "id": "agent_003",
         "name": "Voice Assistant",
         "description": "Optimized for voice interactions and conversational responses",
-        "model": "gemini-2.0-flash-exp"
+        "model": "mixtral-8x7b-32768"
       },
       {
         "id": "agent_004",
         "name": "Code Helper",
         "description": "Expert in programming, debugging, and code review",
-        "model": "gemini-2.0-flash-exp"
+        "model": "mixtral-8x7b-32768"
       }
     ]
   },

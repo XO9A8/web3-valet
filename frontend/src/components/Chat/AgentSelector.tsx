@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { FaRobot, FaExchangeAlt, FaComments } from 'react-icons/fa';
 
 interface AgentSelectorProps {
-  onAgentSelect: (agentName: string) => void;
+  onAgentSelect: (agentId: string, agentName: string) => void;
 }
 
 interface Agent {
@@ -109,7 +109,7 @@ export const AgentSelector: React.FC<AgentSelectorProps> = ({ onAgentSelect }) =
         {agents.map((agent, index) => (
           <motion.button
             key={agent.name}
-            onClick={() => onAgentSelect(agent.name)}
+            onClick={() => onAgentSelect(agent.id || agent.name, agent.name)}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}

@@ -20,6 +20,7 @@ export const ChatView: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const [selectedAgentName, setSelectedAgentName] = useState<string | null>(null);
   const [isMintModalOpen, setIsMintModalOpen] = useState(false);
   const [currentItemToMint, setCurrentItemToMint] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -50,7 +51,7 @@ export const ChatView: React.FC = () => {
       if (file) {
         // Handle audio file upload
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('audio_file', file);
         if (selectedAgent) {
           formData.append('agent_id', selectedAgent);
         }
@@ -123,19 +124,23 @@ export const ChatView: React.FC = () => {
 
       {/* Show agent selector if no agent is selected */}
       {!selectedAgent ? (
-        <AgentSelector onAgentSelect={setSelectedAgent} />
+        <AgentSelector onAgentSelect={(id, name) => {
+          setSelectedAgent(id);
+          setSelectedAgentName(name);
+        }} />
       ) : (
         <>
           {/* Header */}
           <div className="w-full bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between">
             <div className="flex-1" />
             <h1 className="text-xl font-bold text-white text-center flex-1">
-              {selectedAgent}
+              {selectedAgentName || selectedAgent}
             </h1>
             <div className="flex-1 flex justify-end">
               <button
                 onClick={() => {
                   setSelectedAgent(null);
+                  setSelectedAgentName(null);
                   setMessages([]);
                 }}
                 className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors"

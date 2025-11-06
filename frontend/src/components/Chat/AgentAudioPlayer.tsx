@@ -77,7 +77,7 @@ export const AgentAudioPlayer: React.FC<AgentAudioPlayerProps> = ({ audioUrl }) 
   return (
     <div className="mt-3 flex items-center space-x-3 bg-gray-800 rounded-lg p-3 w-full">
       {/* Hidden audio element */}
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      <audio ref={audioRef} src={`${import.meta.env.VITE_API_BASE_URL}${audioUrl}`} preload="metadata" />
 
       {/* Play/Pause Button */}
       <button
