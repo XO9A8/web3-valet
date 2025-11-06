@@ -2,7 +2,7 @@
 /target
 Cargo.lock
 *.pdb
-
+main.rs.backup
 # Environment and secrets
 .env
 .env.local

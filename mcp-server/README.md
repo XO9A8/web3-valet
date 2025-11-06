@@ -2,6 +2,21 @@
 
 A JSON-RPC 2.0 server built with Rust and Axum that provides AI agent functionality using Google's Gemini API. This server manages multiple specialized AI agents and processes user requests with context-aware responses.
 
+## 📚 Table of Contents
+
+- [What It Does](#-what-it-does)
+- [Architecture](#-architecture)
+- [Features](#-features)
+- [AI Agents](#-ai-agents)
+- [Prerequisites](#-prerequisites)
+- [Quick Start](#-quick-start)
+- [JSON-RPC Methods](#-json-rpc-methods)
+- [Testing](#-testing-examples)
+- [Configuration](#-configuration)
+- [Code Documentation](#-code-documentation)
+- [Development](#-development)
+- [Troubleshooting](#-troubleshooting)
+
 ## 🎯 What It Does
 
 The MCP Server is the AI brain of the system:
@@ -386,14 +401,37 @@ Each response includes useful metadata:
 
 ## 🔗 Dependencies
 
-- **axum** - Web framework
-- **tokio** - Async runtime
-- **reqwest** - HTTP client for Gemini API
-- **serde** - JSON serialization
-- **tower-http** - CORS support
-- **tracing** - Structured logging
+- **axum** 0.8 - High-performance web framework
+- **tokio** 1.0 - Async runtime for concurrent operations
+- **reqwest** 0.12 - HTTP client for Gemini API communication
+- **serde** / **serde_json** - JSON serialization/deserialization
+- **tower-http** 0.6 - CORS middleware support
+- **tracing** / **tracing-subscriber** - Structured logging
+- **dotenv** 0.15 - Environment variable management
+
+### Why These Dependencies?
+
+- **Axum**: Type-safe, fast, and ergonomic web framework built on Tower
+- **Tokio**: Industry-standard async runtime with excellent performance
+- **Reqwest**: Feature-rich HTTP client with JSON support
+- **Tower**: Modular middleware ecosystem for cross-cutting concerns
+- **Tracing**: Production-ready structured logging that scales
+
 
 ## 📝 Development
+
+### Project Structure
+
+After modularization, the code is organized as follows:
+
+```
+mcp-server/src/
+├── main.rs         # Server initialization and startup
+├── models.rs       # All data structures (JSON-RPC, Gemini API, agents)
+├── agents.rs       # Agent definitions and management
+├── gemini.rs       # Gemini API client and communication
+└── handlers.rs     # JSON-RPC request handlers
+```
 
 ### Building for Development
 
@@ -409,24 +447,117 @@ $env:RUST_LOG="mcp_server=debug"
 cargo run
 ```
 
+### Code Formatting
+
+```powershell
+# Format code
+cargo fmt
+
+# Check formatting without making changes
+cargo fmt --check
+```
+
+### Linting
+
+```powershell
+# Run clippy for code quality checks
+cargo clippy
+
+# Run clippy with all warnings
+cargo clippy -- -W clippy::all
+```
+
 ### Adding a New Agent
 
-Edit `src/main.rs` and add to the `get_agents()` function:
+1. Open `src/agents.rs`
+2. Add a new agent to the `get_agents()` function:
 
 ```rust
-AgentInfo {
+Agent {
     id: "agent_005".to_string(),
     name: "Your Agent Name".to_string(),
     description: "What this agent does".to_string(),
+    capabilities: vec!["capability1".to_string(), "capability2".to_string()],
     model: "gemini-2.0-flash-exp".to_string(),
+    system_prompt: "Your custom system instruction here...".to_string(),
 }
 ```
 
-Then add the system instruction in `handle_process_text()`:
-
-```rust
-"agent_005" => "Your custom system instruction here...",
+3. Rebuild and test:
+```powershell
+cargo build
+cargo run
 ```
+
+---
+
+## 📖 Code Documentation
+
+This project includes comprehensive inline documentation for all modules, functions, and types. You can view the full documentation in your browser:
+
+### Generate and View Documentation
+
+```powershell
+# Generate and open documentation in your browser
+cargo doc --open
+
+# Generate documentation without opening
+cargo doc --no-deps
+
+# Generate documentation with private items
+cargo doc --document-private-items
+```
+
+### Documentation Structure
+
+The generated documentation includes:
+
+- **Main Module** (`src/main.rs`)
+  - Server architecture overview
+  - Startup process and initialization
+  - Application state management
+
+- **Models Module** (`src/models.rs`)
+  - `JsonRpcRequest` / `JsonRpcResponse` - JSON-RPC 2.0 protocol types
+  - `Agent` - Agent configuration and metadata
+  - `GeminiRequest` / `GeminiResponse` - Gemini API types
+  - `ProcessTextParams` / `ProcessTextResult` - Method parameters and results
+  - All struct fields documented with descriptions
+
+- **Agents Module** (`src/agents.rs`)
+  - `get_agents()` - Returns all available agents
+  - `find_agent_by_id()` - Lookup agent by ID
+  - Complete agent definitions (4 specialized agents)
+
+- **Gemini Module** (`src/gemini.rs`)
+  - `process_with_gemini()` - Main Gemini API communication function
+  - Request building, HTTP handling, response parsing
+  - Error handling and token usage tracking
+
+- **Handlers Module** (`src/handlers.rs`)
+  - `handle_jsonrpc()` - Main JSON-RPC router
+  - `handle_list_agents()` - List all agents
+  - `handle_process_text()` - Process text through an agent
+  - Complete parameter and error documentation
+
+### Inline Documentation Features
+
+✅ **Module-level documentation** - Overview of each file's purpose  
+✅ **Function documentation** - Parameters, returns, errors, examples  
+✅ **Struct documentation** - Field descriptions and usage  
+✅ **Example code** - Usage examples for public APIs  
+✅ **Cross-references** - Links between related items  
+✅ **Error documentation** - What errors can occur and why  
+
+### Reading the Documentation
+
+1. **Navigate by module** - Start with the crate root and drill down into modules
+2. **Search functionality** - Use the search bar to find specific items quickly
+3. **Type signatures** - Click on types to see their complete definitions
+4. **Source code links** - View the actual implementation code
+5. **Example sections** - Copy-paste ready code examples
+
+---
 
 ## 🌟 Example Flow
 
@@ -446,6 +577,16 @@ Then add the system instruction in `handle_process_text()`:
 - ✅ Add `.env` to `.gitignore`
 - ✅ Use environment variables in production
 - ✅ Rotate API keys periodically
+
+---
+
+## 📚 Related Documentation
+
+- **[MCP API Documentation](../mcp-api/README.md)** - REST API frontend for this server
+- **[Frontend Integration Guide](../FRONTEND_INTEGRATION.md)** - Complete guide for frontend developers
+- **[Code Documentation](#-code-documentation)** - View inline Rust documentation with `cargo doc --open`
+
+---
 
 ## 📄 License
 

@@ -2,7 +2,19 @@
 
 A high-performance REST API server built with Rust and Axum that provides a user-friendly interface for AI agent interactions. This server handles text and audio inputs, integrates with ElevenLabs for speech processing, and communicates with the MCP (Model Context Protocol) server for AI agent responses.
 
-## 🎯 What It Does
+## 📚 Table of Contents
+
+- [What It Does](#-what-it-does)
+- [Architecture](#-architecture)
+- [Features](#-features)
+- [Prerequisites](#-prerequisites)
+- [Quick Start](#-quick-start)
+- [API Endpoints](#-api-endpoints)
+- [Configuration](#-configuration-details)
+- [Code Documentation](#-code-documentation)
+- [Troubleshooting](#-troubleshooting)
+- [Development](#-development)
+- [Example Workflow](#-example-workflow)
 
 The MCP API Server acts as a middleware layer that:
 
@@ -289,12 +301,24 @@ mcp-api/
 
 ## 🔗 Dependencies
 
-- **axum** - Web framework
-- **tokio** - Async runtime
-- **reqwest** - HTTP client for external APIs
-- **serde** - JSON serialization
-- **tower-http** - CORS and static file serving
-- **tracing** - Structured logging
+- **axum** 0.8 - High-performance web framework
+- **tokio** 1.0 - Async runtime for concurrent operations
+- **reqwest** 0.12 - HTTP client for external APIs (ElevenLabs, MCP)
+- **serde** / **serde_json** - JSON serialization/deserialization
+- **tower-http** 0.6 - CORS and static file serving middleware
+- **tracing** / **tracing-subscriber** - Structured logging
+- **dotenv** 0.15 - Environment variable management
+- **uuid** 1.0 - Unique filename generation for audio files
+- **tokio-util** 0.7 - Async I/O utilities
+
+### Why These Dependencies?
+
+- **Axum**: Type-safe, fast, and ergonomic web framework built on Tower
+- **Tokio**: Industry-standard async runtime with excellent performance
+- **Reqwest**: Feature-rich HTTP client with multipart form support for file uploads
+- **Tower**: Modular middleware ecosystem for cross-cutting concerns (CORS, logging)
+- **Tracing**: Production-ready structured logging that scales
+
 
 ## 📝 Development
 
@@ -318,6 +342,85 @@ cargo run
 cargo test
 ```
 
+### Code Formatting
+
+```powershell
+# Format code
+cargo fmt
+
+# Check formatting without making changes
+cargo fmt --check
+```
+
+### Linting
+
+```powershell
+# Run clippy for code quality checks
+cargo clippy
+
+# Run clippy with all warnings
+cargo clippy -- -W clippy::all
+```
+
+---
+
+## 📖 Code Documentation
+
+This project includes comprehensive inline documentation for all code components. You can view the full documentation in your browser:
+
+### Generate and View Documentation
+
+```powershell
+# Generate and open documentation in your browser
+cargo doc --open
+
+# Generate documentation without opening
+cargo doc --no-deps
+
+# Generate documentation with private items
+cargo doc --document-private-items
+```
+
+### Documentation Structure
+
+The generated documentation includes:
+
+- **Module Overview** (`src/main.rs`)
+  - Server architecture explanation
+  - Endpoint descriptions
+  - Initialization process
+
+- **Handlers Module** (`src/handlers.rs`)
+  - `get_agents_list()` - Fetches agents from MCP server
+  - `handle_text_input()` - Text processing with TTS
+  - `handle_audio_input()` - Audio processing (STT → MCP → TTS)
+  - Full parameter and return type documentation
+  - Error handling details
+
+- **Models Module** (`src/models.rs`)
+  - `AgentInfo` - Agent representation
+  - `InputTextRequest` - Text input structure
+  - `AgentReplyResponse` - Response format
+  - `JsonRpcRequest` / `JsonRpcResponse` - RPC protocol types
+  - All struct fields documented with examples
+
+### Inline Documentation Features
+
+✅ **Module-level documentation** - Overview of each file's purpose  
+✅ **Function documentation** - Parameters, returns, errors, examples  
+✅ **Struct documentation** - Field descriptions and usage  
+✅ **Example code** - JSON request/response examples  
+✅ **Cross-references** - Links between related items  
+
+### Reading the Documentation
+
+1. **Navigate by module** - Start with the main page and drill down
+2. **Search functionality** - Use the search bar to find specific items
+3. **Type signatures** - Click on types to see their definitions
+4. **Source code links** - View the actual implementation
+
+---
+
 ## 🌟 Example Workflow
 
 1. **Client sends text:** "Explain smart contracts"
@@ -332,6 +435,16 @@ cargo test
 ## 📄 License
 
 This project is part of the web3-valet system.
+
+---
+
+## 📚 Related Documentation
+
+- **[Frontend Integration Guide](../FRONTEND_INTEGRATION.md)** - Complete guide for integrating with web frontends (React, Vue, Vanilla JS)
+- **[MCP Server Documentation](../mcp-server/README.md)** - Backend AI agent server documentation
+- **[Code Documentation](#-code-documentation)** - View inline Rust documentation with `cargo doc --open`
+
+---
 
 ## 🤝 Related Projects
 
